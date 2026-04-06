@@ -11,7 +11,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +39,7 @@ import com.rogue21.taskapp.ui.theme.AppTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskListScreen(
+fun TaskListScreen(         // The Root Composable
     onNavigateToAddTask: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToEditTask: (Int) -> Unit,
@@ -92,7 +91,7 @@ fun TaskListScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun TaskListContent(
+private fun TaskListContent(        // The List Logic
     tasks: List<Task>,
     onDelete: (Task) -> Unit,
     onToggle: (Task, Boolean) -> Unit,
@@ -143,27 +142,24 @@ private fun TaskListContent(
                 )
             }
 
-            item {
+            items(
+                items = completedTasks,
+                key = { it.id }
+            ) { task ->
                 AnimatedVisibility(
                     visible = isCompletedExpanded,
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        completedTasks.forEach { task ->
-                            TaskItem(
-                                task = task,
-                                onDeleteClick = { onDelete(task) },
-                                onToggleCompleted = { onToggle(task, it) },
-                                onTaskClick = { onTaskClick(task.id) },
-                                modifier = Modifier.animateItem(
-                                    placementSpec = tween(durationMillis = 300)
-                                )
-                            )
-                        }
-                    }
+                    TaskItem(
+                        task = task,
+                        onDeleteClick = { onDelete(task) },
+                        onToggleCompleted = { onToggle(task, it) },
+                        onTaskClick = { onTaskClick(task.id) },
+                        modifier = Modifier.animateItem(
+                            placementSpec = tween(durationMillis = 300)
+                        )
+                    )
                 }
             }
         }
@@ -194,8 +190,8 @@ private fun CompletedHeader(
     onToggle: () -> Unit
 ) {
     val rotation by animateFloatAsState(
-        targetValue = if (isExpanded) 0f else -90f,
-        label = "arrow_rotation"
+            targetValue = if (isExpanded) 0f else -90f,
+            label = "arrow_rotation"
     )
 
     Row(

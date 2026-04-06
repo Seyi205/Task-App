@@ -27,32 +27,33 @@ import com.rogue21.taskapp.ui.theme.AppTypography
 
 @Composable
 fun TaskItem(
-    task: Task,
-    onDeleteClick: () -> Unit,
-    onToggleCompleted: (Boolean) -> Unit,
-    onTaskClick: () -> Unit,
-    modifier: Modifier = Modifier
+    task: Task,                                 // The data to display
+    onDeleteClick: () -> Unit,                  // What happens when delete is tapped
+    onToggleCompleted: (Boolean) -> Unit,       // What happens when checkbox changes
+    onTaskClick: () -> Unit,                    // What happens when card is tapped
+    modifier: Modifier = Modifier               // Optional styling from the parent
 ) {
     val containerColor = if (task.isCompleted) {
-        MaterialTheme.colorScheme.surfaceVariant
+        MaterialTheme.colorScheme.surfaceVariant        // greyed out
     } else {
-        MaterialTheme.colorScheme.surface
+        MaterialTheme.colorScheme.surface               // normal
     }
 
-    val contentAlpha = if (task.isCompleted) 0.6f else 1f
+    val contentAlpha = if (task.isCompleted) 0.6f else 1f   // 60% vs 100% opacity
 
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable { onTaskClick() },
+            .fillMaxWidth()                             // stretch to full screen width
+            .clickable { onTaskClick() },               // entire card is tappable
         colors = CardDefaults.cardColors(containerColor = containerColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        // 2.dp elevation creates a subtle drop shadow, just enough to lift it off the background.
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(16.dp),                                 // 16dp breathing room on all sides
+            verticalAlignment = Alignment.CenterVertically,         // items aligned to middle
+            horizontalArrangement = Arrangement.spacedBy(12.dp)     // 12dp gap between children
         ) {
 
             Checkbox(
@@ -61,20 +62,21 @@ fun TaskItem(
             )
 
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f),                 // <- takes ALL remaining horizontal space
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
 
                 Text(
                     text = task.title,
                     style = AppTypography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold        // slightly bold
                     ),
                     textDecoration = if (task.isCompleted)
-                        TextDecoration.LineThrough
+                        TextDecoration.LineThrough              // strikethrough
                     else
                         TextDecoration.None,
-                    modifier = Modifier.alpha(contentAlpha)
+                    modifier = Modifier
+                        .alpha(contentAlpha)      // faded if completed
                 )
 
                 if (task.description.isNotBlank()) {
@@ -82,7 +84,7 @@ fun TaskItem(
                         text = task.description,
                         style = AppTypography.bodyMedium,
 //                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,     // muted color
                         modifier = Modifier.alpha(contentAlpha)
                     )
                 }
@@ -92,10 +94,21 @@ fun TaskItem(
                 onClick = onDeleteClick
             ) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Task"
+                    imageVector = Icons.Default.Delete,             // built-in trash icon
+                    contentDescription = "Delete Task"              // for accessibility / screen readers
                 )
             }
         }
     }
 }
+
+//            The Layout Structure
+//
+//            This is the hierarchy of composables (UI elements nested inside each other):
+//            Card  <- the rounded rectangle container
+//            └── Row  <- horizontal arrangement
+//            ├── Checkbox  <- left side
+//            ├── Column    <- middle, takes up remaining space
+//            │    ├── Text (title)
+//            │    └── Text (description) <- only shown if not blank
+//            └── IconButton (delete)  <- right side

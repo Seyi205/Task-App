@@ -3,6 +3,9 @@ package com.rogue21.taskapp.data.mapper
 import com.rogue21.taskapp.data.local.TaskEntity
 import com.rogue21.taskapp.model.Task
 
+// These basically behave like transform functions in kotlin.
+// TaskEntity  ──>  [ transform ]  ──>  Task
+
 fun TaskEntity.toTask(): Task =
     Task(
         id = id,
